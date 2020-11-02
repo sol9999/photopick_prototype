@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
 
                 String tag_description = exif.getAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION);
+                /*
                 String tag_split[] = tag_description.split("/");
 
                 switch(tag_split[0]) {
@@ -173,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                         others.add(filepath);
                         break;
                 }
-
+                 */
             } catch (IOException e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Exif Error!", Toast.LENGTH_LONG).show();

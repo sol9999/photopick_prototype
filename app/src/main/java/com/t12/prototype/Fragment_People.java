@@ -56,7 +56,7 @@ public class Fragment_People extends Fragment {
             Glide.with(getActivity()).load(((MainActivity) getActivity()).person4.get(0)).centerCrop().into(imageView_person1);
         }
         else {
-            imageView_person3.setImageResource(R.drawable.no_photo_icon);
+            imageView_person4.setImageResource(R.drawable.no_photo_icon);
         }
 
 
