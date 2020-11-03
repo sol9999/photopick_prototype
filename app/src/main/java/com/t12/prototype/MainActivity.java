@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
             String absolutePathOfImage = cursor.getString(columnIndex);
             String nameOfFile = cursor.getString(columnDisplayname);
 
-            Log.d("absolutePathOfImage", absolutePathOfImage);
             lastIndex = absolutePathOfImage.lastIndexOf(nameOfFile);
             lastIndex = lastIndex >= 0 ? lastIndex : nameOfFile.length() - 1;
 
@@ -150,31 +149,30 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         for(String filepath : pathOfAllImages) {
             try {
                 ExifInterface exif = new ExifInterface(filepath);
-                getExif(exif);
-
-
                 String tag_description = exif.getAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION);
-                /*
+
+                if(tag_description != null) {
                 String tag_split[] = tag_description.split("/");
 
-                switch(tag_split[0]) {
-                    case "James" :
-                        person1.add(filepath);
-                        break;
-                    case "Alice" :
-                        person2.add(filepath);
-                        break;
-                    case "Mike" :
-                        person3.add(filepath);
-                        break;
-                    case "Andrew" :
-                        person4.add(filepath);
-                        break;
-                    default:
-                        others.add(filepath);
-                        break;
+                    switch (tag_split[0]) {
+                        case "James":
+                            person1.add(filepath);
+                            break;
+                        case "Alice":
+                            person2.add(filepath);
+                            break;
+                        case "Mike":
+                            person3.add(filepath);
+                            break;
+                        case "Andrew":
+                            person4.add(filepath);
+                            break;
+                        default:
+                            others.add(filepath);
+                            break;
+                    }
                 }
-                 */
+
             } catch (IOException e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Exif Error!", Toast.LENGTH_LONG).show();
@@ -182,18 +180,17 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         }
     }
 
+    /*
     // 이미지 경로를 통해 이미지의 Exif 정보를 받아오는 메소드
     private void getExif(ExifInterface exif) {
-
-        String myAttribute = "[Exif information] \n\n";
-
-        myAttribute += getTagString(ExifInterface.TAG_IMAGE_DESCRIPTION, exif);
-
+        String myAttribute = getTagString(ExifInterface.TAG_IMAGE_DESCRIPTION, exif);
     }
 
     // Exif의 tag들을 문자열로 연결해주는 메소드
     private String getTagString(String tag, ExifInterface exif) {
-        return (tag + " : " + exif.getAttribute(tag) + "\n");
+        // return (tag + " : " + exif.getAttribute(tag) + "\n");
+        return exif.getAttribute(tag);
     }
+     */
 
 }

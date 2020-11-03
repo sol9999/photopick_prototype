@@ -39,21 +39,21 @@ public class Fragment_People extends Fragment {
         }
 
         if( !((MainActivity)getActivity()).person2.isEmpty() ) {
-            Glide.with(getActivity()).load(((MainActivity) getActivity()).person2.get(0)).centerCrop().into(imageView_person1);
+            Glide.with(getActivity()).load(((MainActivity) getActivity()).person2.get(0)).centerCrop().into(imageView_person2);
         }
         else {
             imageView_person2.setImageResource(R.drawable.no_photo_icon);
         }
 
         if( !((MainActivity)getActivity()).person3.isEmpty() ) {
-            Glide.with(getActivity()).load(((MainActivity) getActivity()).person3.get(0)).centerCrop().into(imageView_person1);
+            Glide.with(getActivity()).load(((MainActivity) getActivity()).person3.get(0)).centerCrop().into(imageView_person3);
         }
         else {
             imageView_person3.setImageResource(R.drawable.no_photo_icon);
         }
 
         if( !((MainActivity)getActivity()).person4.isEmpty() ) {
-            Glide.with(getActivity()).load(((MainActivity) getActivity()).person4.get(0)).centerCrop().into(imageView_person1);
+            Glide.with(getActivity()).load(((MainActivity) getActivity()).person4.get(0)).centerCrop().into(imageView_person4);
         }
         else {
             imageView_person4.setImageResource(R.drawable.no_photo_icon);
