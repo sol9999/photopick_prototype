@@ -26,11 +26,24 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements AutoPermissionsListener {
 
-    ArrayList<String> pathOfAllImages;
-    ArrayList<String> person1;
-    ArrayList<String> person2;
-    ArrayList<String> person3;
-    ArrayList<String> person4;
+    ArrayList<String> pathOfAllImages; // 모든 사진 경로 저장
+
+    ArrayList<String> person1; // 모든 person1 사진 경로 저장
+    ArrayList<String> person1_alone; // 혼자 , person1 사진 경로 저장
+    ArrayList<String> person1_together; // 같이 , person1 사진 경로 저장
+
+    ArrayList<String> person2; // 모든 person1 사진 경로 저장
+    ArrayList<String> person2_alone; // 혼자 , person1 사진 경로 저장
+    ArrayList<String> person2_together; // 같이 , person1 사진 경로 저장
+
+    ArrayList<String> person3; // 모든 person1 사진 경로 저장
+    ArrayList<String> person3_alone; // 혼자 , person1 사진 경로 저장
+    ArrayList<String> person3_together; // 같이 , person1 사진 경로 저장
+
+    ArrayList<String> person4; // 모든 person1 사진 경로 저장
+    ArrayList<String> person4_alone; // 혼자 , person1 사진 경로 저장
+    ArrayList<String> person4_together; // 같이 , person1 사진 경로 저장
+
     ArrayList<String> others;
     Fragment_Home fragment_home;
     Fragment_People fragment_people;
@@ -52,10 +65,23 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
 
         pathOfAllImages = new ArrayList<>();
+
         person1 = new ArrayList<>();
+        person1_alone = new ArrayList<>();
+        person1_together = new ArrayList<>();
+
         person2 = new ArrayList<>();
+        person2_alone = new ArrayList<>();
+        person2_together = new ArrayList<>();
+
         person3 = new ArrayList<>();
+        person3_alone = new ArrayList<>();
+        person3_together = new ArrayList<>();
+
         person4 = new ArrayList<>();
+        person4_alone = new ArrayList<>();
+        person4_together = new ArrayList<>();
+
         others = new ArrayList<>();
 
         pathOfAllImages = getPathOfAllImages();
@@ -153,23 +179,53 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
                 if(tag_description != null) {
                 String tag_split[] = tag_description.split("/");
-
-                    switch (tag_split[0]) {
-                        case "James":
-                            person1.add(filepath);
-                            break;
-                        case "Alice":
-                            person2.add(filepath);
-                            break;
-                        case "Mike":
-                            person3.add(filepath);
-                            break;
-                        case "Andrew":
-                            person4.add(filepath);
-                            break;
-                        default:
-                            others.add(filepath);
-                            break;
+                    if(tag_split.length == 1) {
+                        switch (tag_split[0]) {
+                            case "James":
+                                person1.add(filepath);
+                                person1_alone.add(filepath);
+                                break;
+                            case "Alice":
+                                person2.add(filepath);
+                                person2_alone.add(filepath);
+                                break;
+                            case "Mike":
+                                person3.add(filepath);
+                                person3_alone.add(filepath);
+                                break;
+                            case "Andrew":
+                                person4.add(filepath);
+                                person4_alone.add(filepath);
+                                break;
+                            default:
+                                others.add(filepath);
+                                break;
+                        }
+                    }
+                    else {
+                        for(int i=0;i<tag_split.length;i++) {
+                            switch (tag_split[i]) {
+                                case "James":
+                                    person1.add(filepath);
+                                    person1_together.add(filepath);
+                                    break;
+                                case "Alice":
+                                    person2.add(filepath);
+                                    person2_together.add(filepath);
+                                    break;
+                                case "Mike":
+                                    person3.add(filepath);
+                                    person3_together.add(filepath);
+                                    break;
+                                case "Andrew":
+                                    person4.add(filepath);
+                                    person4_together.add(filepath);
+                                    break;
+                                default:
+                                    others.add(filepath);
+                                    break;
+                            }
+                        }
                     }
                 }
 

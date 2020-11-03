@@ -33,19 +33,27 @@ public class Fragment_person3 extends Fragment {
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView1.setLayoutManager(layoutManager1);
         recyclerView2.setLayoutManager(layoutManager2);
-        Person_albumtab_Adapter adapter1 = new Person_albumtab_Adapter(3);
-        Person_albumtab_Adapter adapter2 = new Person_albumtab_Adapter(3);
 
-        // 테스트용 데이터
-        adapter1.addItem(new Person_albumtab("최근 항목","12,563"));
-        adapter1.addItem(new Person_albumtab("일상 사진","547"));
-        adapter1.addItem(new Person_albumtab("기타 사진","53"));
-        adapter1.addItem(new Person_albumtab("이런 사진","533"));
-        adapter1.addItem(new Person_albumtab("저런 사진","677"));
+        Image_hometab_Adapter adapter1 = new Image_hometab_Adapter(getActivity());
+        Image_hometab_Adapter adapter2 = new Image_hometab_Adapter(getActivity());
 
-        adapter2.addItem(new Person_albumtab("혼자","33"));
-        adapter2.addItem(new Person_albumtab("같이","1,270"));
+        if(((MainActivity)getActivity()).person3_alone != null) {
+            for (String imageuri : ((MainActivity) getActivity()).person3_alone) {
+                adapter1.addItem(new Image_hometab(imageuri));
+            }
+        }
+        else {
+            // 리싸이클러뷰에 채울 아이템이 없을때 채울 것 생각.
+        }
 
+        if(((MainActivity)getActivity()).person3_together != null) {
+            for (String imageuri : ((MainActivity) getActivity()).person3_together) {
+                adapter2.addItem(new Image_hometab(imageuri));
+            }
+        }
+        else {
+            // 리싸이클러뷰에 채울 아이템이 없을때 채울 것 생각.
+        }
         recyclerView1.setAdapter(adapter1);
         recyclerView2.setAdapter(adapter2);
 
