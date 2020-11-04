@@ -16,14 +16,19 @@ public class Fragment_person4 extends Fragment {
         return new Fragment_person4();
     }
 
+    RecyclerView recyclerView1;
+    RecyclerView recyclerView2;
+    Image_hometab_Adapter adapter1;
+    Image_hometab_Adapter adapter2;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_person, container, false);
 
-        RecyclerView recyclerView1 = rootView.findViewById(R.id.recyclerView_albumtab_1);
-        RecyclerView recyclerView2 = rootView.findViewById(R.id.recyclerView_albumtab_2);
+        recyclerView1 = rootView.findViewById(R.id.recyclerView_albumtab_1);
+        recyclerView2 = rootView.findViewById(R.id.recyclerView_albumtab_2);
 
         TextView person_fragment_title_textView;
         person_fragment_title_textView = rootView.findViewById(R.id.person_fragment_title);
@@ -34,8 +39,8 @@ public class Fragment_person4 extends Fragment {
         recyclerView1.setLayoutManager(layoutManager1);
         recyclerView2.setLayoutManager(layoutManager2);
 
-        Image_hometab_Adapter adapter1 = new Image_hometab_Adapter(getActivity());
-        Image_hometab_Adapter adapter2 = new Image_hometab_Adapter(getActivity());
+        adapter1 = new Image_hometab_Adapter(getActivity());
+        adapter2 = new Image_hometab_Adapter(getActivity());
 
         if(((MainActivity)getActivity()).person4_alone != null) {
             for (String imageuri : ((MainActivity) getActivity()).person4_alone) {
@@ -56,6 +61,24 @@ public class Fragment_person4 extends Fragment {
         }
         recyclerView1.setAdapter(adapter1);
         recyclerView2.setAdapter(adapter2);
+
+        adapter1.setOnItemClickListener(new OnGalleryItemClickListener() {
+            @Override
+            public void onItemClick(Image_hometab_Adapter.ViewHolder holder, View view, int position) {
+                Image_hometab item = adapter1.getItem(position);
+                ((MainActivity)getActivity()).selected_image_uri = item.getImageURI();
+                ((MainActivity)getActivity()).replaceFragment(Fragment_ImageSelected.newInstance());
+            }
+        });
+
+        adapter2.setOnItemClickListener(new OnGalleryItemClickListener() {
+            @Override
+            public void onItemClick(Image_hometab_Adapter.ViewHolder holder, View view, int position) {
+                Image_hometab item = adapter2.getItem(position);
+                ((MainActivity)getActivity()).selected_image_uri = item.getImageURI();
+                ((MainActivity)getActivity()).replaceFragment(Fragment_ImageSelected.newInstance());
+            }
+        });
 
 
         return rootView;

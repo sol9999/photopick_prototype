@@ -45,7 +45,10 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
     ArrayList<String> person4_together; // 같이 , person1 사진 경로 저장
 
     ArrayList<String> others;
+
     Fragment_Home fragment_home;
+    String selected_image_uri; // 선택한 사진의 이미지 경로를 저장해서 다른 프래그먼트들 끼리의 통신을 위한 변수
+
     Fragment_People fragment_people;
 
     @Override
@@ -62,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
         fragment_home = new Fragment_Home();
         fragment_people = new Fragment_People();
-
 
         pathOfAllImages = new ArrayList<>();
 

@@ -60,7 +60,6 @@ public class Fragment_People extends Fragment {
         }
 
 
-
         CardView cardView_person1 = (CardView)rootView.findViewById(R.id.CardView_person1);
         CardView cardView_person2 = (CardView)rootView.findViewById(R.id.CardView_person2);
         CardView cardView_person3 = (CardView)rootView.findViewById(R.id.CardView_person3);
