@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
     Fragment_People fragment_people;
 
+    BottomNavigationView bottomNavigation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +94,8 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment_home).commit();
 
-        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
+        bottomNavigation = findViewById(R.id.bottom_navigation);
+        // BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override

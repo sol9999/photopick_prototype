@@ -1,16 +1,28 @@
 package com.t12.prototype;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Gallery;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // 선택한 이미지를 보여주는 프래그먼트
 public class Fragment_ImageSelected extends Fragment {
@@ -19,6 +31,11 @@ public class Fragment_ImageSelected extends Fragment {
         return new Fragment_ImageSelected();
     }
 
+    ImageView tag_mod_btn;
+    ImageView img;
+    GestureDetector detector;
+    int ui_flag = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -26,9 +43,103 @@ public class Fragment_ImageSelected extends Fragment {
         // Inflate the layout for this fragment
         ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.selected_image, container, false);
 
-        ImageView img = (ImageView)rootView.findViewById(R.id.selected_image);
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        tag_mod_btn = (ImageView)rootView.findViewById(R.id.tag_mod_button);
+        img = (ImageView)rootView.findViewById(R.id.selected_image);
         Glide.with(getActivity()).load(((MainActivity) getActivity()).selected_image_uri).into(img);
 
+
+        ((MainActivity) getActivity()).bottomNavigation.setVisibility(View.GONE);
+        tag_mod_btn.setVisibility(View.INVISIBLE);
+
+        tag_mod_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tag_modification();
+            }
+        });
+
+
+        detector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+
+                if(ui_flag == 1) {
+                    img.setBackgroundColor(Color.BLACK);
+                    tag_mod_btn.setVisibility(View.INVISIBLE);
+                    ui_flag = 0;
+                }
+                else {
+                    img.setBackgroundColor(Color.WHITE);
+                    tag_mod_btn.setVisibility(View.VISIBLE);
+                    ui_flag = 1;
+                }
+                return true;
+            }
+
+        });
+
+        rootView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                detector.onTouchEvent(event);
+                return true;
+            }
+        });
+
         return rootView;
+    }
+
+    // 태그 수정 Dialog
+    void tag_modification() {
+        final List<String> ListItems = new ArrayList<>();
+        ListItems.add("James");
+        ListItems.add("Alice");
+        ListItems.add("Mike");
+        ListItems.add("Andrew");
+        ListItems.add("Others");
+        final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
+
+        final List SelectedItems  = new ArrayList();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("태그 수정");
+        builder.setMultiChoiceItems(items, null,
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which,
+                                        boolean isChecked) {
+                        if (isChecked) {
+                            //사용자가 체크한 경우 리스트에 추가
+                            SelectedItems.add(which);
+                        } else if (SelectedItems.contains(which)) {
+                            //이미 리스트에 들어있던 아이템이면 제거
+                            SelectedItems.remove(Integer.valueOf(which));
+                        }
+                    }
+                });
+        builder.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String msg="\n";
+                        for (int i = 0; i < SelectedItems.size(); i++) {
+                            int index = (int) SelectedItems.get(i);
+
+                            msg=msg + "#" + ListItems.get(index);
+                        }
+                        Toast.makeText(getActivity(),
+                                "선택한 태그로 수정되었습니다.\n"+ msg , Toast.LENGTH_LONG)
+                                .show();
+                    }
+                });
+        builder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        builder.show();
     }
 }
