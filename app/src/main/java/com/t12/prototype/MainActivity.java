@@ -23,6 +23,7 @@ import com.pedro.library.AutoPermissionsListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AutoPermissionsListener {
 
@@ -52,6 +53,34 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
     Fragment_People fragment_people;
 
     BottomNavigationView bottomNavigation;
+
+    private long lastTimeBackPressed;
+
+    @Override
+    public void onBackPressed() {
+
+        // 인스턴스 초기화
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        // 백스택이 존재할 떄까지
+        if (fm.getBackStackEntryCount() > 0)
+        {
+            fm.popBackStack();
+            ft.commit();
+        }
+        // 백스택이 없는 경우
+        else
+        {
+            //두 번 클릭시 어플 종료
+            if(System.currentTimeMillis() - lastTimeBackPressed < 2000){
+                finish();
+                return;
+            }
+            lastTimeBackPressed = System.currentTimeMillis();
+            Toast.makeText(this,"'뒤로' 버튼을 한 번 더 누르면 종료됩니다.",Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,12 +132,19 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                         switch (menuItem.getItemId()) {
 
                             case R.id.tab3:
-                                getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment_home).commit();
+                                FragmentManager fragmentManager = getSupportFragmentManager();
+                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                                fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+                                fragmentTransaction.replace(R.id.container, fragment_home).commit();
 
                                 return true;
 
                             case R.id.tab4:
-                                getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment_people).commit();
+                                FragmentManager fragmentManager2 = getSupportFragmentManager();
+                                FragmentTransaction fragmentTransaction2 = fragmentManager2.beginTransaction();
+                                // fragmentTransaction2.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_left);
+                                fragmentTransaction2.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+                                fragmentTransaction2.replace(R.id.container, fragment_people).commit();
 
                                 return true;
                         }
@@ -123,6 +159,14 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
     public void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if(fragment instanceof  Fragment_ImageSelected) {
+            fragmentTransaction.setCustomAnimations(R.anim.zoom_enter,R.anim.zoom_exit,R.anim.zoom_enter,R.anim.zoom_exit);
+        }
+
+        else {
+            fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+         }
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.replace(R.id.container, fragment).commit();
     }
@@ -175,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
 
     // pathofAllImages에 담긴 모든 이미지의 경로를 인물별로 분류해주는 메소드
-    private void imagePathClassification() {
+    public void imagePathClassification() {
 
         for(String filepath : pathOfAllImages) {
             try {
@@ -202,8 +246,10 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                                 person4.add(filepath);
                                 person4_alone.add(filepath);
                                 break;
-                            default:
+                            case "Others":
                                 others.add(filepath);
+                                break;
+                            default:
                                 break;
                         }
                     }
@@ -226,8 +272,10 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                                     person4.add(filepath);
                                     person4_together.add(filepath);
                                     break;
-                                default:
+                                case "Others":
                                     others.add(filepath);
+                                    break;
+                                default:
                                     break;
                             }
                         }
@@ -240,6 +288,28 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
             }
         }
     }
+
+    public void clear_arraylist() {
+        person1.clear();
+        person1_alone.clear();
+        person1_together.clear();
+
+        person2.clear();
+        person2_alone.clear();
+        person2_together.clear();
+
+        person3.clear();
+        person3_alone.clear();
+        person3_together.clear();
+
+        person4.clear();
+        person4_alone.clear();
+        person4_together.clear();
+
+        others.clear();
+
+    }
+
 
     /*
     // 이미지 경로를 통해 이미지의 Exif 정보를 받아오는 메소드

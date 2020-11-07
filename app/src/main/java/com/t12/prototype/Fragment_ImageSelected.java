@@ -3,7 +3,11 @@ package com.t12.prototype;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
+import android.os.Build;
 import android.os.Bundle;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -15,12 +19,20 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.github.chrisbanes.photoview.PhotoView;
+import com.github.chrisbanes.photoview.PhotoViewAttacher;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +59,8 @@ public class Fragment_ImageSelected extends Fragment {
 
         tag_mod_btn = (ImageView)rootView.findViewById(R.id.tag_mod_button);
         img = (ImageView)rootView.findViewById(R.id.selected_image);
-        Glide.with(getActivity()).load(((MainActivity) getActivity()).selected_image_uri).into(img);
 
+        Glide.with(getActivity()).load(((MainActivity) getActivity()).selected_image_uri).into(img);
 
         ((MainActivity) getActivity()).bottomNavigation.setVisibility(View.GONE);
         tag_mod_btn.setVisibility(View.INVISIBLE);
@@ -59,7 +71,6 @@ public class Fragment_ImageSelected extends Fragment {
                 tag_modification();
             }
         });
-
 
         detector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
 
@@ -102,11 +113,40 @@ public class Fragment_ImageSelected extends Fragment {
         ListItems.add("Others");
         final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
 
+        final boolean checked[]= {false, false, false, false, false};
+
+        try {
+            ExifInterface exif = new ExifInterface(((MainActivity) getActivity()).selected_image_uri);
+            String tag_description = exif.getAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION);
+            if(tag_description != null) {
+                String tag_split[] = tag_description.split("/");
+                for(int i=0;i<tag_split.length;i++) {
+                    switch (tag_split[i]) {
+                        case "James":
+                            checked[0] = true;
+                            break;
+                        case "Alice":
+                            checked[1] = true;
+                            break;
+                        case "Mike":
+                            checked[2] = true;
+                            break;
+                        case "Andrew":
+                            checked[3] = true;
+                            break;
+                        case "Others":
+                            checked[4] = true;
+                            break;
+                    }
+                }
+            }
+        } catch(IOException e) { e.printStackTrace(); }
+
         final List SelectedItems  = new ArrayList();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("태그 수정");
-        builder.setMultiChoiceItems(items, null,
+        builder.setMultiChoiceItems(items, checked,
                 new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which,
@@ -124,14 +164,70 @@ public class Fragment_ImageSelected extends Fragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         String msg="\n";
-                        for (int i = 0; i < SelectedItems.size(); i++) {
-                            int index = (int) SelectedItems.get(i);
+                        String str="";
 
-                            msg=msg + "#" + ListItems.get(index);
-                        }
-                        Toast.makeText(getActivity(),
-                                "선택한 태그로 수정되었습니다.\n"+ msg , Toast.LENGTH_LONG)
+                        try {
+                            ExifInterface exifInterface = new ExifInterface(((MainActivity) getActivity()).selected_image_uri);
+
+                            for (int i = 0; i < SelectedItems.size(); i++) {
+                                int index = (int) SelectedItems.get(i);
+                                msg = msg + "#" + ListItems.get(index);
+
+                                switch (ListItems.get(index)) {
+                                    case "James":
+                                        if(str == "")
+                                            str += "James";
+                                        else
+                                            str += "/James";
+                                        break;
+                                    case "Alice":
+                                        if(str == "")
+                                            str += "Alice";
+                                        else
+                                            str += "/Alice";
+                                        break;
+                                    case "Mike":
+                                        if(str == "")
+                                            str += "Mike";
+                                        else
+                                            str += "/Mike";
+                                        break;
+                                    case "Andrew":
+                                        if(str == "")
+                                            str += "Andrew";
+                                        else
+                                            str += "/Andrew";
+                                        break;
+                                    case "Others":
+                                        if(str == "")
+                                            str += "Others";
+                                        else
+                                            str += "/Others";
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+
+                            if(SelectedItems.size()>0) {
+                                exifInterface.setAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION, str);
+                                exifInterface.saveAttributes();
+                                ((MainActivity) getActivity()).clear_arraylist();
+                                ((MainActivity) getActivity()).imagePathClassification();
+                            }
+
+                            Toast.makeText(getActivity(),
+                                    "선택한 태그로 수정되었습니다.\n"+ msg , Toast.LENGTH_LONG)
+                                    .show();
+
+                        } catch (IOException e) {
+                            Toast.makeText(getActivity(),
+                                "지원하지 않는 파일입니다.", Toast.LENGTH_LONG)
                                 .show();
+                            e.printStackTrace();
+                        }
+
+
                     }
                 });
         builder.setNegativeButton("Cancel",

@@ -1,9 +1,11 @@
 package com.t12.prototype;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -24,6 +26,8 @@ public class Fragment_person1 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        ((MainActivity) getActivity()).bottomNavigation.setVisibility(View.VISIBLE);
+
         // Inflate the layout for this fragment
         ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_person, container, false);
 
@@ -47,17 +51,31 @@ public class Fragment_person1 extends Fragment {
                 adapter1.addItem(new Image_hometab(imageuri));
             }
         }
-        else {
-            // 리싸이클러뷰에 채울 아이템이 없을때 채울 것 생각.
-        }
 
         if(((MainActivity)getActivity()).person1_together != null) {
             for (String imageuri : ((MainActivity) getActivity()).person1_together) {
                 adapter2.addItem(new Image_hometab(imageuri));
             }
         }
-        else {
-            // 리싸이클러뷰에 채울 아이템이 없을때 채울 것 생각.
+
+        if(adapter1.getItemCount()==0) {
+            LinearLayout alone_title = rootView.findViewById(R.id.alone_title);
+            alone_title.setVisibility(View.GONE);
+        }
+        if(adapter2.getItemCount()==0) {
+            LinearLayout together_title = rootView.findViewById(R.id.together_title);
+            together_title.setVisibility(View.GONE);
+        }
+
+        // 아이템 갯수 6개 미만이면 전체보기 안보임
+        if(adapter1.getItemCount()<6) {
+            TextView alone_view_all_text = rootView.findViewById(R.id.alone_view_all_text);
+            alone_view_all_text.setVisibility(View.GONE);
+        }
+
+        if(adapter2.getItemCount()<6) {
+            TextView together_view_all_text = rootView.findViewById(R.id.together_view_all_text);
+            together_view_all_text.setVisibility(View.GONE);
         }
 
         recyclerView1.setAdapter(adapter1);

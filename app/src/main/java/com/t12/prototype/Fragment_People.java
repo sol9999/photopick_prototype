@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -21,6 +22,7 @@ public class Fragment_People extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        ((MainActivity) getActivity()).bottomNavigation.setVisibility(View.VISIBLE);
         // Inflate the layout for this fragment
         ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_peopletab, container, false);
 
@@ -68,25 +70,53 @@ public class Fragment_People extends Fragment {
         // 각 인물 카드뷰 클릭 시, 인물 프래그먼트로 넘어감
         cardView_person1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((MainActivity)getActivity()).replaceFragment(Fragment_person1.newInstance());
+                if(((MainActivity)getActivity()).person1.isEmpty()) {
+                    Toast.makeText(getActivity(),
+                            "James의 사진이 없어요 ! " , Toast.LENGTH_LONG)
+                            .show();
+                }
+                else {
+                    ((MainActivity) getActivity()).replaceFragment(Fragment_person1.newInstance());
+                }
             }
         });
 
         cardView_person2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((MainActivity)getActivity()).replaceFragment(Fragment_person2.newInstance());
+                if(((MainActivity)getActivity()).person2.isEmpty()) {
+                    Toast.makeText(getActivity(),
+                            "Alice의 사진이 없어요 ! " , Toast.LENGTH_LONG)
+                            .show();
+                }
+                else {
+                    ((MainActivity) getActivity()).replaceFragment(Fragment_person2.newInstance());
+                }
             }
         });
 
         cardView_person3.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((MainActivity)getActivity()).replaceFragment(Fragment_person3.newInstance());
+                if(((MainActivity)getActivity()).person3.isEmpty()) {
+                    Toast.makeText(getActivity(),
+                            "Mike의 사진이 없어요 ! " , Toast.LENGTH_LONG)
+                            .show();
+                }
+                else {
+                    ((MainActivity) getActivity()).replaceFragment(Fragment_person3.newInstance());
+                }
             }
         });
 
         cardView_person4.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((MainActivity)getActivity()).replaceFragment(Fragment_person4.newInstance());
+                if(((MainActivity)getActivity()).person4.isEmpty()) {
+                    Toast.makeText(getActivity(),
+                            "Andrew의 사진이 없어요 ! " , Toast.LENGTH_LONG)
+                            .show();
+                }
+                else {
+                    ((MainActivity) getActivity()).replaceFragment(Fragment_person4.newInstance());
+                }
             }
         });
 
