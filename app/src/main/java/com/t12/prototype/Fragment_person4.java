@@ -21,6 +21,8 @@ public class Fragment_person4 extends Fragment {
     RecyclerView recyclerView2;
     Image_hometab_Adapter adapter1;
     Image_hometab_Adapter adapter2;
+    TextView alone_view_all_text;
+    TextView together_view_all_text;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,6 +31,9 @@ public class Fragment_person4 extends Fragment {
 
         // Inflate the layout for this fragment
         ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_person, container, false);
+
+        alone_view_all_text = rootView.findViewById(R.id.alone_view_all_text);
+        together_view_all_text = rootView.findViewById(R.id.together_view_all_text);
 
         recyclerView1 = rootView.findViewById(R.id.recyclerView_albumtab_1);
         recyclerView2 = rootView.findViewById(R.id.recyclerView_albumtab_2);
@@ -69,12 +74,12 @@ public class Fragment_person4 extends Fragment {
         // 아이템 갯수 6개 미만이면 전체보기 안보임
         if(adapter1.getItemCount()<6) {
             TextView alone_view_all_text = rootView.findViewById(R.id.alone_view_all_text);
-            alone_view_all_text.setVisibility(View.GONE);
+            alone_view_all_text.setVisibility(View.INVISIBLE);
         }
 
         if(adapter2.getItemCount()<6) {
             TextView together_view_all_text = rootView.findViewById(R.id.together_view_all_text);
-            together_view_all_text.setVisibility(View.GONE);
+            together_view_all_text.setVisibility(View.INVISIBLE);
         }
 
         recyclerView1.setAdapter(adapter1);
@@ -95,6 +100,22 @@ public class Fragment_person4 extends Fragment {
                 Image_hometab item = adapter2.getItem(position);
                 ((MainActivity)getActivity()).selected_image_uri = item.getImageURI();
                 ((MainActivity)getActivity()).replaceFragment(Fragment_ImageSelected.newInstance());
+            }
+        });
+
+        alone_view_all_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).view_all_fragment = "Andrew_alone";
+                ((MainActivity) getActivity()).replaceFragment(Fragment_ViewAll.newInstance());
+            }
+        });
+
+        together_view_all_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).view_all_fragment = "Andrew_together";
+                ((MainActivity) getActivity()).replaceFragment(Fragment_ViewAll.newInstance());
             }
         });
 

@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
     private long lastTimeBackPressed;
 
+    String view_all_fragment; // 전체보기를 선택한 프래그먼트를 구별하기 위한 변수
+
     @Override
     public void onBackPressed() {
 
@@ -134,15 +136,22 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                             case R.id.tab3:
                                 FragmentManager fragmentManager = getSupportFragmentManager();
                                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                                if (fragmentManager.getBackStackEntryCount() > 0)
+                                {
+                                    fragmentManager.popBackStack();
+                                }
                                 fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                                 fragmentTransaction.replace(R.id.container, fragment_home).commit();
-
                                 return true;
 
                             case R.id.tab4:
                                 FragmentManager fragmentManager2 = getSupportFragmentManager();
                                 FragmentTransaction fragmentTransaction2 = fragmentManager2.beginTransaction();
-                                // fragmentTransaction2.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_left);
+                                if (fragmentManager2.getBackStackEntryCount() > 0)
+                                {
+                                    fragmentManager2.popBackStack();
+                                }
+                                fragmentTransaction2.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_left);
                                 fragmentTransaction2.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
                                 fragmentTransaction2.replace(R.id.container, fragment_people).commit();
 
