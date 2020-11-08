@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Gallery;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -43,8 +44,8 @@ public class Fragment_ImageSelected extends Fragment {
         return new Fragment_ImageSelected();
     }
 
-    ImageView tag_mod_btn;
-    ImageView img;
+    ImageButton tag_mod_btn;
+    PhotoView img;
     GestureDetector detector;
     int ui_flag = 0;
 
@@ -57,8 +58,8 @@ public class Fragment_ImageSelected extends Fragment {
 
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        tag_mod_btn = (ImageView)rootView.findViewById(R.id.tag_mod_button);
-        img = (ImageView)rootView.findViewById(R.id.selected_image);
+        tag_mod_btn = (ImageButton) rootView.findViewById(R.id.tag_mod_button);
+        img = (PhotoView)rootView.findViewById(R.id.selected_image);
 
         Glide.with(getActivity()).load(((MainActivity) getActivity()).selected_image_uri).into(img);
 
@@ -72,11 +73,9 @@ public class Fragment_ImageSelected extends Fragment {
             }
         });
 
-        detector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
-
+        img.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onSingleTapUp(MotionEvent e) {
-
+            public void onClick(View view) {
                 if(ui_flag == 1) {
                     img.setBackgroundColor(Color.BLACK);
                     tag_mod_btn.setVisibility(View.INVISIBLE);
@@ -87,16 +86,6 @@ public class Fragment_ImageSelected extends Fragment {
                     tag_mod_btn.setVisibility(View.VISIBLE);
                     ui_flag = 1;
                 }
-                return true;
-            }
-
-        });
-
-        rootView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                detector.onTouchEvent(event);
-                return true;
             }
         });
 
