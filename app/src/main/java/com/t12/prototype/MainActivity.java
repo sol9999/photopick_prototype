@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -15,9 +16,11 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.pedro.library.AutoPermissions;
 import com.pedro.library.AutoPermissionsListener;
 
@@ -25,8 +28,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements AutoPermissionsListener {
-
+public class MainActivity extends AppCompatActivity {
+//implements AutoPermissionsListener
     ArrayList<String> pathOfAllImages; // 모든 사진 경로 저장
 
     ArrayList<String> person1; // 모든 person1 사진 경로 저장
@@ -89,8 +92,10 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /* 원본
         // 위험 권환 자동부여 요청
         AutoPermissions.Companion.loadAllPermissions(this, 101);
+         */
 
         //액션바 숨김
         ActionBar actionBar = getSupportActionBar();
@@ -209,10 +214,27 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         return result;
     }
 
+    /* 원본
     // 위험 권환 부여 응답 처리
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        boolean check_result = true;
+
+        // 모든 퍼미션을 허용했는지 체크
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                check_result = false;
+                break;
+            }
+        }
+
+        if(check_result == false) {
+            Toast.makeText(this,"앱을 다시 실행하여 권한을 허용해주세요.",Toast.LENGTH_SHORT).show();
+                    finish();
+        }
+
         AutoPermissions.Companion.parsePermissions(this, requestCode, permissions, this);
     }
 
@@ -225,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
     public void onGranted(int i, String[] strings) {
 
     }
+     */
 
 
     // pathofAllImages에 담긴 모든 이미지의 경로를 인물별로 분류해주는 메소드
