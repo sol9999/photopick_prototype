@@ -40,7 +40,7 @@ public class Fragment_person4 extends Fragment {
 
         TextView person_fragment_title_textView;
         person_fragment_title_textView = rootView.findViewById(R.id.person_fragment_title);
-        person_fragment_title_textView.setText("Andrew");
+        person_fragment_title_textView.setText("엄마");
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
@@ -106,7 +106,7 @@ public class Fragment_person4 extends Fragment {
         alone_view_all_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity)getActivity()).view_all_fragment = "Andrew_alone";
+                ((MainActivity)getActivity()).view_all_fragment = "person4_alone";
                 ((MainActivity) getActivity()).replaceFragment(Fragment_ViewAll.newInstance());
             }
         });
@@ -114,7 +114,7 @@ public class Fragment_person4 extends Fragment {
         together_view_all_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity)getActivity()).view_all_fragment = "Andrew_together";
+                ((MainActivity)getActivity()).view_all_fragment = "person4_together";
                 ((MainActivity) getActivity()).replaceFragment(Fragment_ViewAll.newInstance());
             }
         });

@@ -72,7 +72,7 @@ public class Fragment_People extends Fragment {
             public void onClick(View v) {
                 if(((MainActivity)getActivity()).person1.isEmpty()) {
                     Toast.makeText(getActivity(),
-                            "James의 사진이 없어요 ! " , Toast.LENGTH_LONG)
+                            "아빠의 사진이 없어요 ! " , Toast.LENGTH_LONG)
                             .show();
                 }
                 else {
@@ -85,7 +85,7 @@ public class Fragment_People extends Fragment {
             public void onClick(View v) {
                 if(((MainActivity)getActivity()).person2.isEmpty()) {
                     Toast.makeText(getActivity(),
-                            "Alice의 사진이 없어요 ! " , Toast.LENGTH_LONG)
+                            "할아버지의 사진이 없어요 ! " , Toast.LENGTH_LONG)
                             .show();
                 }
                 else {
@@ -98,7 +98,7 @@ public class Fragment_People extends Fragment {
             public void onClick(View v) {
                 if(((MainActivity)getActivity()).person3.isEmpty()) {
                     Toast.makeText(getActivity(),
-                            "Mike의 사진이 없어요 ! " , Toast.LENGTH_LONG)
+                            "할머니의 사진이 없어요 ! " , Toast.LENGTH_LONG)
                             .show();
                 }
                 else {
@@ -111,7 +111,7 @@ public class Fragment_People extends Fragment {
             public void onClick(View v) {
                 if(((MainActivity)getActivity()).person4.isEmpty()) {
                     Toast.makeText(getActivity(),
-                            "Andrew의 사진이 없어요 ! " , Toast.LENGTH_LONG)
+                            "엄마의 사진이 없어요 ! " , Toast.LENGTH_LONG)
                             .show();
                 }
                 else {

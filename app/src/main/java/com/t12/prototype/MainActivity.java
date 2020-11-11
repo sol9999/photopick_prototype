@@ -7,11 +7,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,17 +25,52 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.pedro.library.AutoPermissions;
 import com.pedro.library.AutoPermissionsListener;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import static org.opencv.imgproc.Imgproc.rectangle;
 
 public class MainActivity extends AppCompatActivity {
+
+    //OpenCV laod용 CallBack
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            if (status == LoaderCallbackInterface.SUCCESS ) {
+                // now we can call opencv code !
+            } else {
+                super.onManagerConnected(status);
+            }
+        }
+    };
+
 //implements AutoPermissionsListener
+    ProgressDialog asyncDialog;
+
     ArrayList<String> pathOfAllImages; // 모든 사진 경로 저장
 
     ArrayList<String> person1; // 모든 person1 사진 경로 저장
@@ -50,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<String> others;
 
+    ArrayList<String> non_tag_images;
+
     Fragment_Home fragment_home;
     String selected_image_uri; // 선택한 사진의 이미지 경로를 저장해서 다른 프래그먼트들 끼리의 통신을 위한 변수
 
@@ -60,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
     private long lastTimeBackPressed;
 
     String view_all_fragment; // 전체보기를 선택한 프래그먼트를 구별하기 위한 변수
+
+    Classifier classifier = new Classifier(this);
 
     @Override
     public void onBackPressed() {
@@ -124,9 +169,13 @@ public class MainActivity extends AppCompatActivity {
 
         others = new ArrayList<>();
 
+        non_tag_images = new ArrayList<>();
+
         pathOfAllImages = getPathOfAllImages();
 
-        imagePathClassification();
+        find_non_tag_image();
+
+        copyFile("haarcascade_frontalface_default.xml");
 
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment_home).commit();
 
@@ -167,6 +216,39 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!OpenCVLoader.initDebug()) {
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_4_0, this, mLoaderCallback);
+        } else {
+            Log.d("OpenCV Init", "OpenCV 라이브러리를 찾았습니다.");
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }
+
+        ClassifictaionTask task = new ClassifictaionTask();
+        task.execute();
+        imagePathClassification();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (asyncDialog != null) {
+            asyncDialog.dismiss();
+            asyncDialog = null;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (asyncDialog != null) {
+            asyncDialog.dismiss();
+            asyncDialog = null;
+        }
     }
 
     // 프래그먼트 to 프래그먼트 화면전환
@@ -248,7 +330,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
      */
+    public void find_non_tag_image() {
+        for(String filepath : pathOfAllImages) {
+            try {
+                ExifInterface exif = new ExifInterface(filepath);
+                String tag_description = exif.getAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION);
 
+                if (tag_description == null) {
+                    non_tag_images.add(filepath);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     // pathofAllImages에 담긴 모든 이미지의 경로를 인물별로 분류해주는 메소드
     public void imagePathClassification() {
@@ -262,23 +357,23 @@ public class MainActivity extends AppCompatActivity {
                 String tag_split[] = tag_description.split("/");
                     if(tag_split.length == 1) {
                         switch (tag_split[0]) {
-                            case "James":
+                            case "아빠":
                                 person1.add(filepath);
                                 person1_alone.add(filepath);
                                 break;
-                            case "Alice":
+                            case "할아버지":
                                 person2.add(filepath);
                                 person2_alone.add(filepath);
                                 break;
-                            case "Mike":
+                            case "할머니":
                                 person3.add(filepath);
                                 person3_alone.add(filepath);
                                 break;
-                            case "Andrew":
+                            case "엄마":
                                 person4.add(filepath);
                                 person4_alone.add(filepath);
                                 break;
-                            case "Others":
+                            case "그외":
                                 others.add(filepath);
                                 break;
                             default:
@@ -288,23 +383,23 @@ public class MainActivity extends AppCompatActivity {
                     else {
                         for(int i=0;i<tag_split.length;i++) {
                             switch (tag_split[i]) {
-                                case "James":
+                                case "아빠":
                                     person1.add(filepath);
                                     person1_together.add(filepath);
                                     break;
-                                case "Alice":
+                                case "할아버지":
                                     person2.add(filepath);
                                     person2_together.add(filepath);
                                     break;
-                                case "Mike":
+                                case "할머니":
                                     person3.add(filepath);
                                     person3_together.add(filepath);
                                     break;
-                                case "Andrew":
+                                case "엄마":
                                     person4.add(filepath);
                                     person4_together.add(filepath);
                                     break;
-                                case "Others":
+                                case "그외":
                                     others.add(filepath);
                                     break;
                                 default:
@@ -342,18 +437,113 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void detect_and_classification() {
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+        CascadeClassifier cascade = new CascadeClassifier(path+"/haarcascade_frontalface_default.xml");
+        /*
+        CascadeClassifier cascade = new CascadeClassifier();
+        if(cascade.empty()) {
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+            Log.e("cascade path", path);
+            cascade.load(path+"/haarcascade_frontalface_default.xml");
+        }
+        if(cascade.empty()) {
+            return;
+        }
+        */
+        Mat image = new Mat();
+        Mat resizingGray = new Mat();
+        MatOfRect faces = new MatOfRect();
+        Bitmap bitmap;
+        // Bitmap cropped_bitmap;
 
-    /*
-    // 이미지 경로를 통해 이미지의 Exif 정보를 받아오는 메소드
-    private void getExif(ExifInterface exif) {
-        String myAttribute = getTagString(ExifInterface.TAG_IMAGE_DESCRIPTION, exif);
+        for(String filepath : non_tag_images) {
+            String classified_tag = "";
+            try {
+                    bitmap = Glide.with(this)
+                            .asBitmap()
+                            .load(filepath)
+                            .submit()
+                            .get();
+                    Utils.bitmapToMat(bitmap, image);
+
+                Imgproc.cvtColor(image,resizingGray,Imgproc.COLOR_BGR2GRAY);
+                Imgproc.resize(resizingGray,resizingGray,new Size(640,360));
+                cascade.detectMultiScale(resizingGray,faces,1.3,3,0,new Size(40,40));
+                for(int i=0;i<faces.total();i++) {
+                    Rect rc = faces.toList().get(i);
+                    rc.x *= 3;
+                    rc.x *= 3;
+                    rc.width *= 3;
+                    rc.height *= 3;
+                    // rectangle(image,rc,new Scalar(255,50,100), 2);
+                    Mat cropped = new Mat(image,rc);
+                    Bitmap cropped_bitmap = Bitmap.createBitmap( cropped.cols(), cropped.rows(), Bitmap.Config.ARGB_8888);
+                    Utils.matToBitmap(cropped, cropped_bitmap);
+                    classified_tag += classifier.classify(cropped_bitmap);
+                }
+            } catch ( final ExecutionException e) { Log.e("Bitmap Error", e.getMessage()); }
+            catch( final InterruptedException e) { Log.e("Bitmap Error", e.getMessage()); }
+
+            try {
+                ExifInterface exif = new ExifInterface(filepath);
+                exif.setAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION, classified_tag);
+                exif.saveAttributes();
+            } catch(IOException e) { e.printStackTrace(); }
+        }
     }
 
-    // Exif의 tag들을 문자열로 연결해주는 메소드
-    private String getTagString(String tag, ExifInterface exif) {
-        // return (tag + " : " + exif.getAttribute(tag) + "\n");
-        return exif.getAttribute(tag);
-    }
-     */
+    // 얼굴인식/분류 작업 진행 AsyncTask
+    public class ClassifictaionTask extends AsyncTask<Void, Void, Void> {
 
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+                asyncDialog = new ProgressDialog(MainActivity.this);
+                asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                asyncDialog.setMessage("인식 분류 작업중");
+                asyncDialog.show();
+        }
+
+        protected Void doInBackground(Void... arg0) {
+            MainActivity.this.detect_and_classification();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            asyncDialog.dismiss();
+            super.onPostExecute(aVoid);
+        }
+    }
+
+    // assets의 haarcascade 를 내부 저장소로 복사해주는 메소드
+    private void copyFile(String filename) {
+        String baseDir = Environment.getExternalStorageDirectory().getPath();
+        String pathDir = baseDir + File.separator + filename;
+
+        AssetManager assetManager = this.getAssets();
+
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
+        try {
+            Log.d( "copyFileMethod", "copyFile :: 다음 경로로 파일복사 "+ pathDir);
+            inputStream = assetManager.open(filename);
+            outputStream = new FileOutputStream(pathDir);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
+            }
+            inputStream.close();
+            inputStream = null;
+            outputStream.flush();
+            outputStream.close();
+            outputStream = null;
+        } catch (Exception e) {
+            Log.d("copyFileMethod", "copyFile :: 파일 복사 중 예외 발생 "+e.toString() );
+        }
+    }
 }

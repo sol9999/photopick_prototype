@@ -36,45 +36,45 @@ public class Fragment_ViewAll extends Fragment {
 
         // 전체보기를 실행한 프래그먼트에 따라 리싸이클러뷰에 다른 아이템을 설정
         switch(((MainActivity) getActivity()).view_all_fragment) {
-            case "James_alone":
+            case "person1_alone":
                 for (String imageuri : ((MainActivity) getActivity()).person1_alone) {
                     adapter.addItem(new Image_hometab(imageuri));
                 }
                 break;
-            case "James_together":
+            case "person1_together":
                 for (String imageuri : ((MainActivity) getActivity()).person1_together) {
                     adapter.addItem(new Image_hometab(imageuri));
                 }
                 break;
 
-            case "Alice_alone":
+            case "person2_alone":
                 for (String imageuri : ((MainActivity) getActivity()).person2_alone) {
                     adapter.addItem(new Image_hometab(imageuri));
                 }
                 break;
-            case "Alice_together":
+            case "person2_together":
                 for (String imageuri : ((MainActivity) getActivity()).person2_together) {
                     adapter.addItem(new Image_hometab(imageuri));
                 }
                 break;
 
-            case "Mike_alone":
+            case "person3_alone":
                 for (String imageuri : ((MainActivity) getActivity()).person3_alone) {
                     adapter.addItem(new Image_hometab(imageuri));
                 }
                 break;
-            case "Mike_together":
+            case "person3_together":
                 for (String imageuri : ((MainActivity) getActivity()).person3_together) {
                     adapter.addItem(new Image_hometab(imageuri));
                 }
                 break;
 
-            case "Andrew_alone":
+            case "person4_alone":
                 for (String imageuri : ((MainActivity) getActivity()).person4_alone) {
                     adapter.addItem(new Image_hometab(imageuri));
                 }
                 break;
-            case "Andrew_together":
+            case "person4_together":
                 for (String imageuri : ((MainActivity) getActivity()).person4_together) {
                     adapter.addItem(new Image_hometab(imageuri));
                 }

@@ -1,13 +1,14 @@
 package com.t12.prototype;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.provider.MediaStore;
-
 import org.tensorflow.lite.Interpreter;
 
 import java.io.FileInputStream;
@@ -18,19 +19,20 @@ import java.nio.channels.FileChannel;
 
 public class Classifier {
 
+    private Context context;
+
+    public Classifier(Context context) {
+        this.context = context;
+    }
+
     //임시 ui에서 실행할 때는 MainActivity에서 실행하여 activity 인자가 없었으나 함수화 시키면서 인자 추가함.
-    public String classify(Activity activity, Intent data){
+    public String classify(Bitmap bitmap){
         String result;
 
         float[][][][] input = new float[1][128][128][3];
         float[][] output = new float[1][4]; //아빠, 할아버지, 할머니, 엄마
 
-        try {
             int batchNum = 0;
-            //input으로 넣어줄 데이터를 intent로 받아옴
-            InputStream buf = activity.getContentResolver().openInputStream(data.getData());
-            Bitmap bitmap = BitmapFactory.decodeStream(buf);
-            buf.close();
 
             //128*128*3
             for (int x = 0; x < 128; x++) {
@@ -42,13 +44,11 @@ public class Classifier {
                 }
             }
 
-            Interpreter lite = getTfliteInterpreter(activity, "converted_model.tflite");
+            Interpreter lite = getTfliteInterpreter((MainActivity)context, "converted_model.tflite");
             lite.run(input, output);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         int index=0;
+
         for(int i=0; i<4; i++){
             if(output[0][i] >= output[0][index]){
                 index = i;

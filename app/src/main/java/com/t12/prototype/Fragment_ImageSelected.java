@@ -95,11 +95,11 @@ public class Fragment_ImageSelected extends Fragment {
     // 태그 수정 Dialog
     void tag_modification() {
         final List<String> ListItems = new ArrayList<>();
-        ListItems.add("James");
-        ListItems.add("Alice");
-        ListItems.add("Mike");
-        ListItems.add("Andrew");
-        ListItems.add("Others");
+        ListItems.add("아빠");
+        ListItems.add("할아버지");
+        ListItems.add("할머니");
+        ListItems.add("엄마");
+        ListItems.add("그외");
         final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
 
         final boolean checked[]= {false, false, false, false, false};
@@ -111,16 +111,16 @@ public class Fragment_ImageSelected extends Fragment {
                 String tag_split[] = tag_description.split("/");
                 for(int i=0;i<tag_split.length;i++) {
                     switch (tag_split[i]) {
-                        case "James":
+                        case "아빠":
                             checked[0] = true;
                             break;
-                        case "Alice":
+                        case "할아버지":
                             checked[1] = true;
                             break;
-                        case "Mike":
+                        case "할머니":
                             checked[2] = true;
                             break;
-                        case "Andrew":
+                        case "엄마":
                             checked[3] = true;
                             break;
                         case "Others":
@@ -163,35 +163,35 @@ public class Fragment_ImageSelected extends Fragment {
                                 msg = msg + "#" + ListItems.get(index);
 
                                 switch (ListItems.get(index)) {
-                                    case "James":
+                                    case "아빠":
                                         if(str == "")
-                                            str += "James";
+                                            str += "아빠";
                                         else
-                                            str += "/James";
+                                            str += "/아빠";
                                         break;
-                                    case "Alice":
+                                    case "할아버지":
                                         if(str == "")
-                                            str += "Alice";
+                                            str += "할아버지";
                                         else
-                                            str += "/Alice";
+                                            str += "/할아버지";
                                         break;
-                                    case "Mike":
+                                    case "할머니":
                                         if(str == "")
-                                            str += "Mike";
+                                            str += "할머니";
                                         else
-                                            str += "/Mike";
+                                            str += "/할머니";
                                         break;
-                                    case "Andrew":
+                                    case "엄마":
                                         if(str == "")
-                                            str += "Andrew";
+                                            str += "엄마";
                                         else
-                                            str += "/Andrew";
+                                            str += "/엄마";
                                         break;
-                                    case "Others":
+                                    case "그외":
                                         if(str == "")
-                                            str += "Others";
+                                            str += "그외";
                                         else
-                                            str += "/Others";
+                                            str += "/그외";
                                         break;
                                     default:
                                         break;
