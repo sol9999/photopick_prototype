@@ -468,8 +468,11 @@ public class MainActivity extends AppCompatActivity {
                     Utils.bitmapToMat(bitmap, image);
 
                 Imgproc.cvtColor(image,resizingGray,Imgproc.COLOR_BGR2GRAY);
-                Imgproc.resize(resizingGray,resizingGray,new Size(640,360));
-                cascade.detectMultiScale(resizingGray,faces,1.3,3,0,new Size(40,40));
+                //Imgproc.resize(resizingGray,resizingGray,new Size(320,180));
+                //cascade.detectMultiScale(resizingGray,faces,1.3,3,0,new Size(40,40));
+
+                cascade.detectMultiScale(resizingGray,faces,1.3,3,0);
+
                 for(int i=0;i<faces.total();i++) {
                     Rect rc = faces.toList().get(i);
                     rc.x *= 3;
@@ -492,6 +495,9 @@ public class MainActivity extends AppCompatActivity {
                 exif.setAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION, classified_tag);
                 exif.saveAttributes();
             } catch(IOException e) { e.printStackTrace(); }
+
+            bitmap = null;
+
         }
     }
 
