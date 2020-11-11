@@ -479,7 +479,51 @@ public class MainActivity extends AppCompatActivity {
                     Bitmap cropped_bitmap = Bitmap.createBitmap( cropped.cols(), cropped.rows(), Bitmap.Config.ARGB_8888);
                     Utils.matToBitmap(cropped, cropped_bitmap);
                     cropped_bitmap = Bitmap.createScaledBitmap(cropped_bitmap,128,128,true);
-                    classified_tag += classifier.classify(cropped_bitmap);
+                    //classified_tag += classifier.classify(cropped_bitmap);
+                    switch (classifier.classify(cropped_bitmap)) {
+                        case "아빠":
+                            if(classified_tag == "") {
+                                classified_tag += "아빠";
+                            }
+                            else {
+                                classified_tag += "/아빠";
+                            }
+                                break;
+                        case "할아버지":
+                            if(classified_tag == "") {
+                                classified_tag += "할아버지";
+                            }
+                            else {
+                                classified_tag += "/할아버지";
+                            }
+                            break;
+                        case "할머니":
+                            if(classified_tag == "") {
+                                classified_tag += "할머니";
+                            }
+                            else {
+                                classified_tag += "/할머니";
+                            }
+                            break;
+                        case "엄마":
+                            if(classified_tag == "") {
+                                classified_tag += "엄마";
+                            }
+                            else {
+                                classified_tag += "/엄마";
+                            }
+                            break;
+                        case "그외":
+                            if(classified_tag == "") {
+                                classified_tag += "그외";
+                            }
+                            else {
+                                classified_tag += "/그외";
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                     Log.e("classified_tag", classified_tag);
                 }
             } catch ( final ExecutionException e) { Log.e("Bitmap Error", e.getMessage()); }
