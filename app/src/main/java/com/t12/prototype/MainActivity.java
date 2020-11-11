@@ -475,11 +475,6 @@ public class MainActivity extends AppCompatActivity {
 
                 for(int i=0;i<faces.total();i++) {
                     Rect rc = faces.toList().get(i);
-                    rc.x *= 3;
-                    rc.y *= 3;
-                    rc.width *= 3;
-                    rc.height *= 3;
-                    // rectangle(image,rc,new Scalar(255,50,100), 2);
                     Mat cropped = new Mat(image,rc);
                     Bitmap cropped_bitmap = Bitmap.createBitmap( cropped.cols(), cropped.rows(), Bitmap.Config.ARGB_8888);
                     Utils.matToBitmap(cropped, cropped_bitmap);
