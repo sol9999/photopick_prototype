@@ -175,6 +175,10 @@ public class MainActivity extends AppCompatActivity {
 
         find_non_tag_image();
 
+        for(String s : non_tag_images) {
+            Log.e("non_tag_images", s);
+        }
+
         copyFile("haarcascade_frontalface_default.xml");
 
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment_home).commit();
@@ -221,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        Log.e("OnResume","시작");
         if(!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_4_0, this, mLoaderCallback);
         } else {
@@ -230,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
 
         ClassifictaionTask task = new ClassifictaionTask();
         task.execute();
-        imagePathClassification();
     }
 
     @Override
@@ -296,40 +300,7 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-    /* 원본
-    // 위험 권환 부여 응답 처리
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        // super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        boolean check_result = true;
-
-        // 모든 퍼미션을 허용했는지 체크
-        for (int result : grantResults) {
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                check_result = false;
-                break;
-            }
-        }
-
-        if(check_result == false) {
-            Toast.makeText(this,"앱을 다시 실행하여 권한을 허용해주세요.",Toast.LENGTH_SHORT).show();
-                    finish();
-        }
-
-        AutoPermissions.Companion.parsePermissions(this, requestCode, permissions, this);
-    }
-
-    @Override
-    public void onDenied(int i, String[] strings) {
-
-    }
-
-    @Override
-    public void onGranted(int i, String[] strings) {
-
-    }
-     */
+    // 태그 없는 이미지(모델에 넣을 이미지) 경로만 따로 저장
     public void find_non_tag_image() {
         for(String filepath : pathOfAllImages) {
             try {
@@ -345,61 +316,61 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // pathofAllImages에 담긴 모든 이미지의 경로를 인물별로 분류해주는 메소드
+    // pathofAllImages에 담긴 모든 이미지의 경로를 인물별로 분류해주는 메소드 ( 태그 확인 후 인물 별로 경로 분리 저장 )
     public void imagePathClassification() {
 
         for(String filepath : pathOfAllImages) {
             try {
                 ExifInterface exif = new ExifInterface(filepath);
                 String tag_description = exif.getAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION);
-
                 if(tag_description != null) {
                 String tag_split[] = tag_description.split("/");
-                    if(tag_split.length == 1) {
+
+                    if(tag_split.length == 1) { // 인물 1명일 경우
                         switch (tag_split[0]) {
-                            case "아빠":
+                            case "person1":
                                 person1.add(filepath);
                                 person1_alone.add(filepath);
                                 break;
-                            case "할아버지":
+                            case "person2":
                                 person2.add(filepath);
                                 person2_alone.add(filepath);
                                 break;
-                            case "할머니":
+                            case "person3":
                                 person3.add(filepath);
                                 person3_alone.add(filepath);
                                 break;
-                            case "엄마":
+                            case "person4":
                                 person4.add(filepath);
                                 person4_alone.add(filepath);
                                 break;
-                            case "그외":
+                            case "others":
                                 others.add(filepath);
                                 break;
                             default:
                                 break;
                         }
                     }
-                    else {
+                    else { // 인물 2인 이상일 경우
                         for(int i=0;i<tag_split.length;i++) {
                             switch (tag_split[i]) {
-                                case "아빠":
+                                case "person1":
                                     person1.add(filepath);
                                     person1_together.add(filepath);
                                     break;
-                                case "할아버지":
+                                case "person2":
                                     person2.add(filepath);
                                     person2_together.add(filepath);
                                     break;
-                                case "할머니":
+                                case "person3":
                                     person3.add(filepath);
                                     person3_together.add(filepath);
                                     break;
-                                case "엄마":
+                                case "person4":
                                     person4.add(filepath);
                                     person4_together.add(filepath);
                                     break;
-                                case "그외":
+                                case "others":
                                     others.add(filepath);
                                     break;
                                 default:
@@ -416,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void clear_arraylist() {
+    public void clear_arraylist() { // 태그 수정 후 재분류를 위해 저장됐었던 인물 경로 초기화
         person1.clear();
         person1_alone.clear();
         person1_together.clear();
@@ -437,7 +408,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void detect_and_classification() {
+    public void detect_and_classification() { // 이미지에서 얼굴 찾은 후 크롭하여 모델에 넣은 후, 결과를 토대로 태그를 만들어 저장함
         String path = Environment.getExternalStorageDirectory().getAbsolutePath();
         CascadeClassifier cascade = new CascadeClassifier(path+"/haarcascade_frontalface_default.xml");
         /*
@@ -481,50 +452,51 @@ public class MainActivity extends AppCompatActivity {
                     cropped_bitmap = Bitmap.createScaledBitmap(cropped_bitmap,128,128,true);
                     //classified_tag += classifier.classify(cropped_bitmap);
                     switch (classifier.classify(cropped_bitmap)) {
-                        case "아빠":
+                        case "person1":
                             if(classified_tag == "") {
-                                classified_tag += "아빠";
+                                classified_tag += "person1";
                             }
                             else {
-                                classified_tag += "/아빠";
+                                classified_tag += "/person1";
                             }
                                 break;
-                        case "할아버지":
+                        case "person2":
                             if(classified_tag == "") {
-                                classified_tag += "할아버지";
+                                classified_tag += "person2";
                             }
                             else {
-                                classified_tag += "/할아버지";
+                                classified_tag += "/person2";
                             }
                             break;
-                        case "할머니":
+                        case "person3":
                             if(classified_tag == "") {
-                                classified_tag += "할머니";
+                                classified_tag += "person3";
                             }
                             else {
-                                classified_tag += "/할머니";
+                                classified_tag += "/person3";
                             }
                             break;
-                        case "엄마":
+                        case "person4":
                             if(classified_tag == "") {
-                                classified_tag += "엄마";
+                                classified_tag += "person4";
                             }
                             else {
-                                classified_tag += "/엄마";
+                                classified_tag += "/person4";
                             }
                             break;
-                        case "그외":
+                        case "others":
                             if(classified_tag == "") {
-                                classified_tag += "그외";
+                                classified_tag += "others";
                             }
                             else {
-                                classified_tag += "/그외";
+                                classified_tag += "/others";
                             }
                             break;
                         default:
                             break;
                     }
                     Log.e("classified_tag", classified_tag);
+                    Log.e("filepath", filepath);
                 }
             } catch ( final ExecutionException e) { Log.e("Bitmap Error", e.getMessage()); }
             catch( final InterruptedException e) { Log.e("Bitmap Error", e.getMessage()); }
@@ -547,12 +519,13 @@ public class MainActivity extends AppCompatActivity {
             super.onPreExecute();
                 asyncDialog = new ProgressDialog(MainActivity.this);
                 asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                asyncDialog.setMessage("인식 분류 작업중");
+                asyncDialog.setMessage("인식 분류 작업중...");
                 asyncDialog.show();
         }
 
         protected Void doInBackground(Void... arg0) {
-            MainActivity.this.detect_and_classification();
+            detect_and_classification();
+            imagePathClassification();
             return null;
         }
 

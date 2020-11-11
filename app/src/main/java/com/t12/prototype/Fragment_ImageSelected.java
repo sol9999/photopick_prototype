@@ -111,19 +111,19 @@ public class Fragment_ImageSelected extends Fragment {
                 String tag_split[] = tag_description.split("/");
                 for(int i=0;i<tag_split.length;i++) {
                     switch (tag_split[i]) {
-                        case "아빠":
+                        case "person1":
                             checked[0] = true;
                             break;
-                        case "할아버지":
+                        case "person2":
                             checked[1] = true;
                             break;
-                        case "할머니":
+                        case "person3":
                             checked[2] = true;
                             break;
-                        case "엄마":
+                        case "person4":
                             checked[3] = true;
                             break;
-                        case "Others":
+                        case "others":
                             checked[4] = true;
                             break;
                     }
@@ -160,38 +160,42 @@ public class Fragment_ImageSelected extends Fragment {
 
                             for (int i = 0; i < SelectedItems.size(); i++) {
                                 int index = (int) SelectedItems.get(i);
-                                msg = msg + "#" + ListItems.get(index);
 
                                 switch (ListItems.get(index)) {
                                     case "아빠":
                                         if(str == "")
-                                            str += "아빠";
+                                            str += "person1";
                                         else
-                                            str += "/아빠";
+                                            str += "/person1";
+                                        msg += "#아빠";
                                         break;
                                     case "할아버지":
                                         if(str == "")
-                                            str += "할아버지";
+                                            str += "person2";
                                         else
-                                            str += "/할아버지";
+                                            str += "/person2";
+                                        msg += "#할아버지";
                                         break;
                                     case "할머니":
                                         if(str == "")
-                                            str += "할머니";
+                                            str += "person3";
                                         else
-                                            str += "/할머니";
+                                            str += "/person3";
+                                        msg += "#할머니";
                                         break;
                                     case "엄마":
                                         if(str == "")
-                                            str += "엄마";
+                                            str += "person4";
                                         else
-                                            str += "/엄마";
+                                            str += "/person4";
+                                        msg += "#엄마";
                                         break;
                                     case "그외":
                                         if(str == "")
-                                            str += "그외";
+                                            str += "others";
                                         else
-                                            str += "/그외";
+                                            str += "/others";
+                                        msg += "#그외";
                                         break;
                                     default:
                                         break;

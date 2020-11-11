@@ -50,17 +50,17 @@ public class Classifier {
         for(int i=0; i<4; i++) {
             if (output[0][i] * 100 > 90) {
                 if (i == 0) {
-                    result = "아빠";
+                    result = "person1";
                 } else if (i == 1) {
-                    result = "할아버지";
+                    result = "person2";
                 } else if (i == 2) {
-                    result = "할머니";
+                    result = "person3";
                 } else {
-                    result = "엄마";
+                    result = "person4";
                 }
             }
             else {
-                result = "그외";
+                result = "others";
             }
         }
         return result;
