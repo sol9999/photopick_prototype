@@ -293,7 +293,9 @@ public class MainActivity extends AppCompatActivity {
 
             if (!TextUtils.isEmpty(absolutePathOfImage))
             {
-                result.add(absolutePathOfImage);
+                if(absolutePathOfImage.substring(absolutePathOfImage.lastIndexOf(".")+1).equals("jpg")) {
+                    result.add(absolutePathOfImage);
+                }
             }
         }
 
