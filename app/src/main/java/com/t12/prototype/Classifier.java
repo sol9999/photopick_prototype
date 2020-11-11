@@ -27,7 +27,7 @@ public class Classifier {
 
     //임시 ui에서 실행할 때는 MainActivity에서 실행하여 activity 인자가 없었으나 함수화 시키면서 인자 추가함.
     public String classify(Bitmap bitmap){
-        String result;
+        String result = null;
 
         float[][][][] input = new float[1][128][128][3];
         float[][] output = new float[1][4]; //아빠, 할아버지, 할머니, 엄마
@@ -47,28 +47,22 @@ public class Classifier {
             Interpreter lite = getTfliteInterpreter((MainActivity)context, "converted_model.tflite");
             lite.run(input, output);
 
-        int index=0;
-
-        for(int i=0; i<4; i++){
-            if(output[0][i] >= output[0][index]){
-                index = i;
-
+        for(int i=0; i<4; i++) {
+            if (output[0][i] * 100 > 90) {
+                if (i == 0) {
+                    result = "아빠";
+                } else if (i == 1) {
+                    result = "할아버지";
+                } else if (i == 2) {
+                    result = "할머니";
+                } else {
+                    result = "엄마";
+                }
+            }
+            else {
+                result = "그외";
             }
         }
-
-        if (index == 0) {
-            result ="아빠";
-        }
-        else if (index == 1) {
-            result ="할아버지";
-        }
-        else if (index == 2) {
-            result ="할머니";
-        }
-        else {
-             result ="엄마";
-        }
-
         return result;
     }
 

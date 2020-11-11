@@ -455,7 +455,6 @@ public class MainActivity extends AppCompatActivity {
         Mat resizingGray = new Mat();
         MatOfRect faces = new MatOfRect();
         Bitmap bitmap;
-        // Bitmap cropped_bitmap;
 
         for(String filepath : non_tag_images) {
             String classified_tag = "";
@@ -465,6 +464,7 @@ public class MainActivity extends AppCompatActivity {
                             .load(filepath)
                             .submit()
                             .get();
+
                     Utils.bitmapToMat(bitmap, image);
 
                 Imgproc.cvtColor(image,resizingGray,Imgproc.COLOR_BGR2GRAY);
@@ -473,14 +473,16 @@ public class MainActivity extends AppCompatActivity {
                 for(int i=0;i<faces.total();i++) {
                     Rect rc = faces.toList().get(i);
                     rc.x *= 3;
-                    rc.x *= 3;
+                    rc.y *= 3;
                     rc.width *= 3;
                     rc.height *= 3;
                     // rectangle(image,rc,new Scalar(255,50,100), 2);
                     Mat cropped = new Mat(image,rc);
                     Bitmap cropped_bitmap = Bitmap.createBitmap( cropped.cols(), cropped.rows(), Bitmap.Config.ARGB_8888);
                     Utils.matToBitmap(cropped, cropped_bitmap);
+                    cropped_bitmap = Bitmap.createScaledBitmap(cropped_bitmap,128,128,true);
                     classified_tag += classifier.classify(cropped_bitmap);
+                    Log.e("classified_tag", classified_tag);
                 }
             } catch ( final ExecutionException e) { Log.e("Bitmap Error", e.getMessage()); }
             catch( final InterruptedException e) { Log.e("Bitmap Error", e.getMessage()); }
@@ -495,7 +497,6 @@ public class MainActivity extends AppCompatActivity {
 
     // 얼굴인식/분류 작업 진행 AsyncTask
     public class ClassifictaionTask extends AsyncTask<Void, Void, Void> {
-
 
         protected void onPreExecute() {
             super.onPreExecute();
