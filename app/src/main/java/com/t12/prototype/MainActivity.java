@@ -428,8 +428,10 @@ public class MainActivity extends AppCompatActivity {
         Mat resizingGray = new Mat();
         MatOfRect faces = new MatOfRect();
         Bitmap bitmap;
+        int count = 0;
 
         for(String filepath : non_tag_images) {
+            count++;
             String classified_tag = "";
             try {
                     bitmap = Glide.with(this)
@@ -452,6 +454,10 @@ public class MainActivity extends AppCompatActivity {
                     Bitmap cropped_bitmap = Bitmap.createBitmap( cropped.cols(), cropped.rows(), Bitmap.Config.ARGB_8888);
                     Utils.matToBitmap(cropped, cropped_bitmap);
                     cropped_bitmap = Bitmap.createScaledBitmap(cropped_bitmap,128,128,true);
+
+                    // TEST : 크롭 비트맵 저장용
+                    //SaveBitmapToFileCache(cropped_bitmap, "/storage/emulated/0/Pictures/TEST_CROP/", count + i + ".jpg");
+
                     //classified_tag += classifier.classify(cropped_bitmap);
                     switch (classifier.classify(cropped_bitmap)) {
                         case "person1":
@@ -520,6 +526,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
                 asyncDialog = new ProgressDialog(MainActivity.this);
+                asyncDialog.setCancelable(false);
                 asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 asyncDialog.setMessage("인식 분류 작업중...");
                 asyncDialog.show();
@@ -567,4 +574,37 @@ public class MainActivity extends AppCompatActivity {
             Log.d("copyFileMethod", "copyFile :: 파일 복사 중 예외 발생 "+e.toString() );
         }
     }
+
+    // CROP Image TEST용 메소드
+    /*
+    public  void SaveBitmapToFileCache(Bitmap bitmap, String strFilePath,
+                                       String filename) {
+        File file = new File(strFilePath);
+
+        // If no folders
+        if (!file.exists()) {
+            file.mkdirs();
+            // Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
+        }
+
+        File fileCacheItem = new File(strFilePath + filename);
+        OutputStream out = null;
+
+        try {
+            fileCacheItem.createNewFile();
+            out = new FileOutputStream(fileCacheItem);
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    */
+
 }
