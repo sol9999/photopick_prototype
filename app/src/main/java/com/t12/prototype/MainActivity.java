@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
 
     // pathofAllImages에 담긴 모든 이미지의 경로를 인물별로 분류해주는 메소드 ( 태그 확인 후 인물 별로 경로 분리 저장 )
     public void imagePathClassification() {
-
+        int others_count = 0;
         for(String filepath : pathOfAllImages) {
             try {
                 ExifInterface exif = new ExifInterface(filepath);
@@ -373,7 +373,10 @@ public class MainActivity extends AppCompatActivity {
                                     person4_together.add(filepath);
                                     break;
                                 case "others":
-                                    others.add(filepath);
+                                    if(others_count == 0) {
+                                        others.add(filepath);
+                                        others_count = 1;
+                                    }
                                     break;
                                 default:
                                     break;
@@ -428,10 +431,10 @@ public class MainActivity extends AppCompatActivity {
         Mat resizingGray = new Mat();
         MatOfRect faces = new MatOfRect();
         Bitmap bitmap;
-        int count = 0;
+        //int count = 0;
 
         for(String filepath : non_tag_images) {
-            count++;
+            //count++;
             String classified_tag = "";
             try {
                     bitmap = Glide.with(this)
@@ -449,19 +452,21 @@ public class MainActivity extends AppCompatActivity {
                 cascade.detectMultiScale(resizingGray,faces,1.3,3,0);
 
                 for(int i=0;i<faces.total();i++) {
+                    String result;
                     Rect rc = faces.toList().get(i);
                     Mat cropped = new Mat(image,rc);
                     Bitmap cropped_bitmap = Bitmap.createBitmap( cropped.cols(), cropped.rows(), Bitmap.Config.ARGB_8888);
                     Utils.matToBitmap(cropped, cropped_bitmap);
                     cropped_bitmap = Bitmap.createScaledBitmap(cropped_bitmap,128,128,true);
-
+                    result = classifier.classify(cropped_bitmap);
+                    Log.e("result", result);
                     // TEST : 크롭 비트맵 저장용
                     //SaveBitmapToFileCache(cropped_bitmap, "/storage/emulated/0/Pictures/TEST_CROP/", count + i + ".jpg");
 
                     //classified_tag += classifier.classify(cropped_bitmap);
-                    switch (classifier.classify(cropped_bitmap)) {
+                    switch (result) {
                         case "person1":
-                            if(classified_tag == "") {
+                            if(classified_tag.equals("")) {
                                 classified_tag += "person1";
                             }
                             else {
@@ -469,39 +474,39 @@ public class MainActivity extends AppCompatActivity {
                             }
                                 break;
                         case "person2":
-                            if(classified_tag == "") {
+                            if(classified_tag.equals("")) {
                                 classified_tag += "person2";
                             }
                             else {
                                 classified_tag += "/person2";
                             }
-                            break;
+                                break;
                         case "person3":
-                            if(classified_tag == "") {
+                            if(classified_tag.equals("")) {
                                 classified_tag += "person3";
                             }
                             else {
                                 classified_tag += "/person3";
                             }
-                            break;
+                                break;
                         case "person4":
-                            if(classified_tag == "") {
+                            if(classified_tag.equals("")) {
                                 classified_tag += "person4";
                             }
                             else {
                                 classified_tag += "/person4";
                             }
-                            break;
+                                break;
                         case "others":
-                            if(classified_tag == "") {
+                            if(classified_tag.equals("")) {
                                 classified_tag += "others";
                             }
                             else {
                                 classified_tag += "/others";
                             }
-                            break;
+                                break;
                         default:
-                            break;
+                                break;
                     }
                     Log.e("classified_tag", classified_tag);
                     Log.e("filepath", filepath);

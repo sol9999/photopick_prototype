@@ -9,11 +9,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.provider.MediaStore;
+import android.util.Log;
+
 import org.tensorflow.lite.Interpreter;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -27,7 +32,6 @@ public class Classifier {
 
     //임시 ui에서 실행할 때는 MainActivity에서 실행하여 activity 인자가 없었으나 함수화 시키면서 인자 추가함.
     public String classify(Bitmap bitmap){
-        String result = null;
 
         float[][][][] input = new float[1][128][128][3];
         float[][] output = new float[1][4]; //아빠, 할아버지, 할머니, 엄마
@@ -47,23 +51,28 @@ public class Classifier {
             Interpreter lite = getTfliteInterpreter((MainActivity)context, "converted_model.tflite");
             lite.run(input, output);
 
+            for(int i=0;i<4;i++) {
+                Log.e("test_output[0]["+i+"]", "" + output[0][i]);
+            }
+
         for(int i=0; i<4; i++) {
-            if (output[0][i] * 100 > 90) {
+            if (output[0][i] > 0.9) {
                 if (i == 0) {
-                    result = "person1";
+                    //result = "person1";
+                    return "person1";
                 } else if (i == 1) {
-                    result = "person2";
+                    //result = "person2";
+                    return "person2";
                 } else if (i == 2) {
-                    result = "person3";
+                    //result = "person3";
+                    return "person3";
                 } else {
-                    result = "person4";
+                    //result = "person4";
+                    return "person4";
                 }
             }
-            else {
-                result = "others";
-            }
         }
-        return result;
+        return "others";
     }
 
     private Interpreter getTfliteInterpreter(Activity activity, String modelPath) {
@@ -85,4 +94,5 @@ public class Classifier {
         long declaredLength = fileDescriptor.getDeclaredLength();
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
     }
+
 }
