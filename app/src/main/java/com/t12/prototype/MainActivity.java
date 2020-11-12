@@ -431,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
         Mat resizingGray = new Mat();
         MatOfRect faces = new MatOfRect();
         Bitmap bitmap;
-        //int count = 0;
+        int count = 0;
 
         for(String filepath : non_tag_images) {
             //count++;
@@ -521,7 +521,8 @@ public class MainActivity extends AppCompatActivity {
             } catch(IOException e) { e.printStackTrace(); }
 
             bitmap = null;
-
+            count++;
+            asyncDialog.setProgress(count);
         }
     }
 
@@ -530,11 +531,22 @@ public class MainActivity extends AppCompatActivity {
 
         protected void onPreExecute() {
             super.onPreExecute();
+            /* 원본
                 asyncDialog = new ProgressDialog(MainActivity.this);
                 asyncDialog.setCancelable(false);
                 asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 asyncDialog.setMessage("인식 분류 작업중...");
                 asyncDialog.show();
+
+             */
+
+            asyncDialog = new ProgressDialog(MainActivity.this);
+            asyncDialog.setCancelable(false);
+            asyncDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            asyncDialog.setMax(non_tag_images.size());
+            asyncDialog.setProgress(0);
+            asyncDialog.setMessage("인식 분류 작업중...");
+            asyncDialog.show();
         }
 
         protected Void doInBackground(Void... arg0) {
