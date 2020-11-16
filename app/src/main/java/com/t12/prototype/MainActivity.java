@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         if (fm.getBackStackEntryCount() > 0)
         {
             fm.popBackStack();
-            ft.commit();
+            // ft.commit();
         }
         // 백스택이 없는 경우
         else
@@ -193,23 +193,16 @@ public class MainActivity extends AppCompatActivity {
 
                             case R.id.tab3:
                                 FragmentManager fragmentManager = getSupportFragmentManager();
+                                fragmentManager.popBackStackImmediate(null,FragmentManager.POP_BACK_STACK_INCLUSIVE);
                                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                                if (fragmentManager.getBackStackEntryCount() > 0)
-                                {
-                                    fragmentManager.popBackStack();
-                                }
                                 fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                                 fragmentTransaction.replace(R.id.container, fragment_home).commit();
                                 return true;
 
                             case R.id.tab4:
                                 FragmentManager fragmentManager2 = getSupportFragmentManager();
+                                fragmentManager2.popBackStackImmediate(null,FragmentManager.POP_BACK_STACK_INCLUSIVE);
                                 FragmentTransaction fragmentTransaction2 = fragmentManager2.beginTransaction();
-                                if (fragmentManager2.getBackStackEntryCount() > 0)
-                                {
-                                    fragmentManager2.popBackStack();
-                                }
-                                fragmentTransaction2.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_left);
                                 fragmentTransaction2.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
                                 fragmentTransaction2.replace(R.id.container, fragment_people).commit();
 
@@ -260,15 +253,15 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
+
         if(fragment instanceof  Fragment_ImageSelected) {
             fragmentTransaction.setCustomAnimations(R.anim.zoom_enter,R.anim.zoom_exit,R.anim.zoom_enter,R.anim.zoom_exit);
         }
-
         else {
             fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
          }
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.replace(R.id.container, fragment).commit();
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.replace(R.id.container, fragment).commit();
     }
 
     // 모든 이미지 경로 받아오기  메소드
@@ -416,25 +409,15 @@ public class MainActivity extends AppCompatActivity {
     public void detect_and_classification() { // 이미지에서 얼굴 찾은 후 크롭하여 모델에 넣은 후, 결과를 토대로 태그를 만들어 저장함
         String path = Environment.getExternalStorageDirectory().getAbsolutePath();
         CascadeClassifier cascade = new CascadeClassifier(path+"/haarcascade_frontalface_default.xml");
-        /*
-        CascadeClassifier cascade = new CascadeClassifier();
-        if(cascade.empty()) {
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath();
-            Log.e("cascade path", path);
-            cascade.load(path+"/haarcascade_frontalface_default.xml");
-        }
-        if(cascade.empty()) {
-            return;
-        }
-        */
+
         Mat image = new Mat();
         Mat resizingGray = new Mat();
         MatOfRect faces = new MatOfRect();
         Bitmap bitmap;
         int count = 0;
+        // int test_count = 0; //
 
         for(String filepath : non_tag_images) {
-            //count++;
             String classified_tag = "";
             try {
                     bitmap = Glide.with(this)
@@ -461,7 +444,8 @@ public class MainActivity extends AppCompatActivity {
                     result = classifier.classify(cropped_bitmap);
                     Log.e("result", result);
                     // TEST : 크롭 비트맵 저장용
-                    //SaveBitmapToFileCache(cropped_bitmap, "/storage/emulated/0/Pictures/TEST_CROP/", count + i + ".jpg");
+                    //test_count++; //
+                    //SaveBitmapToFileCache(cropped_bitmap, "/storage/emulated/0/Pictures/TEST_CROP", test_count*10 + i + ".jpg");
 
                     //classified_tag += classifier.classify(cropped_bitmap);
                     switch (result) {
@@ -519,6 +503,7 @@ public class MainActivity extends AppCompatActivity {
                 exif.setAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION, classified_tag);
                 exif.saveAttributes();
             } catch(IOException e) { e.printStackTrace(); }
+
 
             bitmap = null;
             count++;
@@ -622,6 +607,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    */
+
+     */
+
 
 }

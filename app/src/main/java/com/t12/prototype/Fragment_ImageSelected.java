@@ -101,6 +101,7 @@ public class Fragment_ImageSelected extends Fragment {
         ListItems.add("엄마");
         ListItems.add("그외");
         final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
+        final List SelectedItems  = new ArrayList();
 
         final boolean checked[]= {false, false, false, false, false};
 
@@ -113,25 +114,28 @@ public class Fragment_ImageSelected extends Fragment {
                     switch (tag_split[i]) {
                         case "person1":
                             checked[0] = true;
+                            SelectedItems.add(0);
                             break;
                         case "person2":
                             checked[1] = true;
+                            SelectedItems.add(1);
                             break;
                         case "person3":
                             checked[2] = true;
+                            SelectedItems.add(2);
                             break;
                         case "person4":
                             checked[3] = true;
+                            SelectedItems.add(3);
                             break;
                         case "others":
                             checked[4] = true;
+                            SelectedItems.add(4);
                             break;
                     }
                 }
             }
         } catch(IOException e) { e.printStackTrace(); }
-
-        final List SelectedItems  = new ArrayList();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("태그 수정");

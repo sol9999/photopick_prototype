@@ -54,7 +54,6 @@ public class Classifier {
             for(int i=0;i<4;i++) {
                 Log.e("test_output[0]["+i+"]", "" + output[0][i]);
             }
-
         for(int i=0; i<4; i++) {
             if (output[0][i] > 0.9) {
                 if (i == 0) {
